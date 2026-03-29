@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Escritórios de Advocacia - Brasil</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        #map {
+            height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+        }
+
+        .form-section h2 {
+            color: #333;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input, textarea {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .lista-section {
+            margin-top: 10px;
+        }
+
+        .lista-section h3 {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 8px;
+        }
+
+        .escritorio-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 0.9em;
+        }
+
+        .escritorio-nome {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .escritorio-info {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .btn-deletar {
+            padding: 6px 12px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-deletar:hover {
+            background: #ff3838;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .message.success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .message.error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            #map {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            #map {
+                height: 400px;
+            }
+
+            .sidebar {
+                height: auto;
+            }
+        }
+
+        .leaflet-popup-content {
+            font-family: inherit;
+        }
+
+        .popover-content {
+            padding: 10px;
+        }
+
+        .popover-content strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .popover-content p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Mapa de Escritórios de Advocacia</h1>
+            <p class="subtitle">Localize escritórios de advocacia em todo o Brasil</p>
+        </header>
+
+        <div class="content">
+            <div id="map"></div>
+
+            <div class="sidebar">
+                <div class="form-section">
+                    <h2>Adicionar Escritório</h2>
+                    <div id="mensagem"></div>
+
+                    <div class="form-group">
+                        <label for="nome">Nome do Escritório *</label>
+                        <input type="text" id="nome" placeholder="Ex: Silva & Associados">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endereco">Endereço *</label>
+                        <input type="text" id="endereco" placeholder="Ex: Av. Paulista, 1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cidade">Cidade *</label>
+                        <input type="text" id="cidade" placeholder="Ex: São Paulo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado *</label>
+                        <input type="text" id="estado" placeholder="Ex: SP">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="latitude">Latitude *</label>
+                        <input type="number" id="latitude" placeholder="-23.5505" step="0.0001">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="longitude">Longitude *</label>
+                        <input type="number" id="longitude" placeholder="-46.6333" step="0.0001">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="text" id="telefone" placeholder="(11) 3000-0000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="especialidades">Especialidades</label>
+                        <textarea id="especialidades" placeholder="Ex: Direito Trabalhista, Direito Civil"></textarea>
+                    </div>
+
+                    <button onclick="adicionarEscritorio()">📍 Adicionar</button>
+                </div>
+
+                <div class="lista-section">
+                    <h3>Escritórios Cadastrados</h3>
+                    <div id="lista-escritorios"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        let mapa;
+        let marcadores = {};
+
+        // Inicializar mapa
+        function inicializarMapa() {
+            mapa = L.map('map').setView([-14.2350, -51.9253], 4);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(mapa);
+
+            carregarEscritórios();
+        }
+
+        // Adicionar escritório
+        function adicionarEscritorio() {
+            const nome = document.getElementById('nome').value.trim();
+            const endereco = document.getElementById('endereco').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const estado = document.getElementById('estado').value.trim();
+            const latitude = parseFloat(document.getElementById('latitude').value);
+            const longitude = parseFloat(document.getElementById('longitude').value);
+            const telefone = document.getElementById('telefone').value.trim();
+            const especialidades = document.getElementById('especialidades').value.trim();
+
+            if (!nome || !endereco || !cidade || !estado || !latitude || !longitude) {
+                exibirMensagem('Por favor, preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+
+            if (isNaN(latitude) || isNaN(longitude)) {
+                exibirMensagem('Latitude e Longitude devem ser números válidos', 'error');
+                return;
+            }
+
+            const dados = {
+                nome, endereco, cidade, estado, latitude, longitude, telefone, especialidades
+            };
+
+            fetch('api.php?acao=adicionar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    exibirMensagem('Escritório adicionado com sucesso!', 'success');
+                    limparFormulario();
+                    carregarEscritórios();
+                } else {
+                    exibirMensagem('Erro ao adicionar: ' + data.mensagem, 'error');
+                }
+            })
+            .catch(err => exibirMensagem('Erro de conexão', 'error'));
+        }
+
+        // Carregar escritórios
+        function carregarEscritórios() {
+            fetch('api.php?acao=listar')
+                .then(res => res.json())
+                .then(data => {
+                    limparMarcadores();
+                    if (data.escritorios) {
+                        data.escritorios.forEach(e => adicionarMarcador(e));
+                        atualizarLista(data.escritorios);
+                    }
+                })
+                .catch(err => console.error('Erro ao carregar:', err));
+        }
+
+        // Adicionar marcador no mapa
+        function adicionarMarcador(escritorio) {
+            const marker = L.marker([escritorio.latitude, escritorio.longitude])
+                .addTo(mapa)
+                .bindPopup(`
+                    <div class="popover-content">
+                        <strong>${escritorio.nome}</strong>
+                        <p>📍 ${escritorio.endereco}</p>
+                        <p>${escritorio.cidade}, ${escritorio.estado}</p>
+                        ${escritorio.telefone ? `<p>📞 ${escritorio.telefone}</p>` : ''}
+                        ${escritorio.especialidades ? `<p>📋 ${escritorio.especialidades}</p>` : ''}
+                    </div>
+                `);
+
+            marcadores[escritorio.id] = marker;
+        }
+
+        // Deletar escritório
+        function deletarEscritorio(id) {
+            if (confirm('Tem certeza que deseja deletar este escritório?')) {
+                fetch('api.php?acao=deletar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        exibirMensagem('Escritório deletado!', 'success');
+                        carregarEscritórios();
+                    }
+                })
+                .catch(err => console.error('Erro:', err));
+            }
+        }
+
+        // Atualizar lista lateral
+        function atualizarLista(escritorios) {
+            const lista = document.getElementById('lista-escritorios');
+            
+            if (escritorios.length === 0) {
+                lista.innerHTML = '<p style="color: #999;">Nenhum escritório cadastrado</p>';
+                return;
+            }
+
+            lista.innerHTML = escritorios.map(e => `
+                <div class="escritorio-item">
+                    <div class="escritorio-nome">${e.nome}</div>
+                    <div class="escritorio-info">📍 ${e.cidade}, ${e.estado}</div>
+                    <div class="escritorio-info">${e.endereco}</div>
+                    ${e.telefone ? `<div class="escritorio-info">📞 ${e.telefone}</div>` : ''}
+                    <button class="btn-deletar" onclick="deletarEscritorio(${e.id})">🗑️ Deletar</button>
+                </div>
+            `).join('');
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('nome').value = '';
+            document.getElementById('endereco').value = '';
+            document.getElementById('cidade').value = '';
+            document.getElementById('estado').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('telefone').value = '';
+            document.getElementById('especialidades').value = '';
+        }
+
+        // Limpar marcadores
+        function limparMarcadores() {
+            Object.values(marcadores).forEach(marker => mapa.removeLayer(marker));
+            marcadores = {};
+        }
+
+        // Exibir mensagem
+        function exibirMensagem(texto, tipo) {
+            const elem = document.getElementById('mensagem');
+            elem.className = 'message ' + tipo;
+            elem.textContent = texto;
+            setTimeout(() => elem.textContent = '', 4000);
+        }
+
+        // Inicializar quando página carregar
+        window.addEventListener('load', inicializarMapa);
+    </script>
+</body>
+</html>

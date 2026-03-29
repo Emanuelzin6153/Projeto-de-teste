@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1711700001000,
+    "nome": "Silva & Associados Advocacia",
+    "endereco": "Av. Paulista, 1000",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "telefone": "(11) 3000-0000",
+    "especialidades": "Direito Trabalhista, Direito Civil",
+    "data_adicao": "29/03/2026 10:30:45"
+  },
+  {
+    "id": 1711700002000,
+    "nome": "Costa & Partners",
+    "endereco": "Av. Rio Branco, 500",
+    "cidade": "Rio de Janeiro",
+    "estado": "RJ",
+    "latitude": -22.9068,
+    "longitude": -43.1729,
+    "telefone": "(21) 3500-1000",
+    "especialidades": "Direito Comercial, Direito Corporativo",
+    "data_adicao": "29/03/2026 11:00:00"
+  },
+  {
+    "id": 1711700003000,
+    "nome": "Advocacia Mineira",
+    "endereco": "Av. Getúlio Vargas, 1500",
+    "cidade": "Belo Horizonte",
+    "estado": "MG",
+    "latitude": -19.9191,
+    "longitude": -43.9386,
+    "telefone": "(31) 2500-5000",
+    "especialidades": "Direito Administrativo, Direito Tributário",
+    "data_adicao": "29/03/2026 11:15:30"
+  },
+  {
+    "id": 1711700004000,
+    "nome": "Escritório Brasília Jurídica",
+    "endereco": "SBS Quadra 1, Bloco A",
+    "cidade": "Brasília",
+    "estado": "DF",
+    "latitude": -15.8267,
+    "longitude": -47.8615,
+    "telefone": "(61) 3000-7000",
+    "especialidades": "Direito Administrativo, Direito Constitucional",
+    "data_adicao": "29/03/2026 12:00:00"
+  },
+  {
+    "id": 1711700005000,
+    "nome": "Advocacia Salvador",
+    "endereco": "Av. Tancredo Neves, 620",
+    "cidade": "Salvador",
+    "estado": "BA",
+    "latitude": -12.9714,
+    "longitude": -38.5014,
+    "telefone": "(71) 3000-9000",
+    "especialidades": "Direito Imobiliário, Direito de Família",
+    "data_adicao": "29/03/2026 12:30:15"
+  }
+]
